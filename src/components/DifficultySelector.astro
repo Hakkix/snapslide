@@ -1,0 +1,54 @@
+---
+// Difficulty selector component
+import { DIFFICULTY_LABELS } from '../stores/gameStore';
+
+const difficulties = Object.entries(DIFFICULTY_LABELS) as [string, string][];
+---
+
+<div class="flex flex-col gap-2">
+  <label class="text-sm font-medium text-slate-300">Difficulty</label>
+  <div class="flex flex-wrap gap-2">
+    {difficulties.map(([value, label]) => (
+      <button
+        type="button"
+        class="difficulty-btn px-3 py-2 text-sm rounded-lg bg-slate-700 text-slate-300 hover:bg-slate-600 transition-colors data-[selected=true]:bg-blue-600 data-[selected=true]:text-white"
+        data-difficulty={value}
+        data-selected={value === '4' ? 'true' : 'false'}
+      >
+        {label}
+      </button>
+    ))}
+  </div>
+</div>
+
+<script>
+  import { setDifficulty, $difficulty, $isPlaying, type Difficulty } from '../stores/gameStore';
+
+  const buttons = document.querySelectorAll('.difficulty-btn') as NodeListOf<HTMLButtonElement>;
+
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if ($isPlaying.get()) return; // Can't change during game
+
+      const difficulty = parseInt(btn.dataset.difficulty || '4') as Difficulty;
+      setDifficulty(difficulty);
+    });
+  });
+
+  // Update button states
+  function updateButtons() {
+    const current = $difficulty.get();
+    const isPlaying = $isPlaying.get();
+
+    buttons.forEach(btn => {
+      const btnDifficulty = parseInt(btn.dataset.difficulty || '4');
+      btn.dataset.selected = String(btnDifficulty === current);
+      btn.disabled = isPlaying;
+      btn.style.opacity = isPlaying ? '0.5' : '1';
+      btn.style.cursor = isPlaying ? 'not-allowed' : 'pointer';
+    });
+  }
+
+  $difficulty.subscribe(updateButtons);
+  $isPlaying.subscribe(updateButtons);
+</script>

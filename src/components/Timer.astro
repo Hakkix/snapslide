@@ -1,0 +1,54 @@
+---
+// Timer component - subscribes to game state
+---
+
+<div class="flex items-center gap-2 bg-slate-700 px-4 py-2 rounded-lg">
+  <svg class="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+  <span id="timer-display" class="text-xl font-mono text-white">0:00</span>
+</div>
+
+<script>
+  import { $elapsedTime, $isPlaying, $isWon, incrementTime } from '../stores/gameStore';
+
+  const timerDisplay = document.getElementById('timer-display') as HTMLSpanElement;
+  let intervalId: number | null = null;
+
+  function formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function updateDisplay() {
+    timerDisplay.textContent = formatTime($elapsedTime.get());
+  }
+
+  // Subscribe to time changes
+  $elapsedTime.subscribe(updateDisplay);
+
+  // Start/stop timer based on game state
+  $isPlaying.subscribe((playing) => {
+    if (playing && !$isWon.get()) {
+      // Start timer
+      if (intervalId) clearInterval(intervalId);
+      intervalId = window.setInterval(() => {
+        incrementTime();
+      }, 1000);
+    } else {
+      // Stop timer
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+  });
+
+  $isWon.subscribe((won) => {
+    if (won && intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  });
+</script>
