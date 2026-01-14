@@ -1,0 +1,138 @@
+---
+import Layout from '../layouts/Layout.astro';
+import GameBoard from '../components/GameBoard.astro';
+import Timer from '../components/Timer.astro';
+import MoveCounter from '../components/MoveCounter.astro';
+import ImageUpload from '../components/ImageUpload.astro';
+import DifficultySelector from '../components/DifficultySelector.astro';
+---
+
+<Layout title="SnapSlide - Sliding Puzzle Game">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-bold mb-2 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        SnapSlide
+      </h1>
+      <p class="text-slate-400">Upload an image, slide the tiles, solve the puzzle!</p>
+    </header>
+
+    <div class="grid md:grid-cols-[300px_1fr] gap-8">
+      <!-- Sidebar - Controls -->
+      <aside class="space-y-6">
+        <section>
+          <h2 class="text-lg font-semibold mb-3 text-slate-200">Upload Your Image</h2>
+          <ImageUpload />
+        </section>
+
+        <section>
+          <DifficultySelector />
+        </section>
+
+        <section>
+          <button
+            id="start-btn"
+            class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-lg font-semibold transition-all transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Start New Game
+          </button>
+          <button
+            id="reset-btn"
+            class="w-full mt-2 py-2 px-4 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition-colors"
+          >
+            Reset
+          </button>
+        </section>
+
+        <!-- Stats -->
+        <section class="flex gap-3">
+          <Timer />
+          <MoveCounter />
+        </section>
+
+        <!-- Instructions -->
+        <section class="p-4 bg-slate-800 rounded-lg">
+          <h3 class="font-semibold mb-2 text-slate-200">How to Play</h3>
+          <ol class="text-sm text-slate-400 space-y-1 list-decimal list-inside">
+            <li>Upload an image (or use the default)</li>
+            <li>Select your difficulty level</li>
+            <li>Click "Start New Game"</li>
+            <li>Click tiles adjacent to the empty space to move them</li>
+            <li>Arrange all tiles in the correct order to win!</li>
+          </ol>
+        </section>
+      </aside>
+
+      <!-- Main Game Area -->
+      <main>
+        <GameBoard />
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-slate-500 text-sm">
+      <p>Built with Astro + Tailwind CSS + Nano Stores</p>
+    </footer>
+  </div>
+
+  <script>
+    import { resetGame, $imageUrl } from '../stores/gameStore';
+
+    const startBtn = document.getElementById('start-btn') as HTMLButtonElement;
+    const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement;
+
+    startBtn.addEventListener('click', () => {
+      // Set a default image if none uploaded
+      if (!$imageUrl.get()) {
+        setDefaultImage();
+      }
+      // Call the game's init function (exposed globally by GameBoard)
+      (window as any).initGame?.();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      resetGame();
+    });
+
+    // Set a default gradient image using canvas
+    function setDefaultImage() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 400;
+      canvas.height = 400;
+      const ctx = canvas.getContext('2d')!;
+
+      // Create a gradient pattern
+      const gradient = ctx.createLinearGradient(0, 0, 400, 400);
+      gradient.addColorStop(0, '#667eea');
+      gradient.addColorStop(0.5, '#764ba2');
+      gradient.addColorStop(1, '#f093fb');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 400, 400);
+
+      // Add some visual elements
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      for (let i = 0; i < 5; i++) {
+        ctx.beginPath();
+        ctx.arc(80 + i * 60, 80 + i * 60, 40, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Add text
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = 'bold 60px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('SNAP', 200, 180);
+      ctx.fillText('SLIDE', 200, 250);
+
+      // Convert to blob URL
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          import('../stores/gameStore').then(({ setImageUrl }) => {
+            setImageUrl(url);
+          });
+        }
+      });
+    }
+  </script>
+</Layout>
