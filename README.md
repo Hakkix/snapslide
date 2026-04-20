@@ -1,4 +1,4 @@
-SnapSlide 🧩
+SnapSlide 🧩 https://snapslide.vercel.app 
 
 SnapSlide is a modern, web-based sliding tile puzzle game. Unlike traditional puzzles, SnapSlide allows users to upload their own images, which are instantly converted into interactive puzzles.
 The game is built with performance in mind, utilizing Astro's island architecture for zero-JS static content and Tailwind CSS for rapid, responsive grid styling.
