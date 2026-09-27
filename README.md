@@ -1,7 +1,7 @@
 SnapSlide 🧩 https://snapslide.vercel.app 
 
 SnapSlide is a modern, web-based sliding tile puzzle game. Unlike traditional puzzles, SnapSlide allows users to upload their own images, which are instantly converted into interactive puzzles.
-The game is built with performance in mind, utilizing Astro's island architecture for zero-JS static content and Tailwind CSS for rapid, responsive grid styling.
+The landing page is a scroll-driven experience: a live 3D puzzle in the hero, a pinned scroll sequence that shows the image being sliced and scrambled, and the playable board with spring-animated tiles.
 ✨ Features
  * 📸 Custom Image Upload: Users can upload any JPG/PNG. The game processes the image client-side (no server upload required for privacy and speed).
  * 🧠 Guaranteed Solvability: Uses a "Reverse Walk" algorithm (scrambling by valid moves) rather than random placement, ensuring every generated puzzle can be solved.
@@ -13,14 +13,15 @@ The game is built with performance in mind, utilizing Astro's island architectur
  * ⏱️ Stat Tracking: Tracks time taken and total moves made.
  * 📱 Responsive: Fully playable on desktop and mobile devices.
 🛠️ Tech Stack
- * Core Framework: Astro (Static Site Generation with partial hydration).
- * Styling: Tailwind CSS (Grid layouts and utility classes).
- * Runtime: Node.js.
- * State Management: Nano Stores (For sharing timer/move state between UI islands).
- * Logic: Vanilla TypeScript/JavaScript (Interactive islands).
+ * Core Framework: Next.js (App Router) + React.
+ * Styling: Tailwind CSS.
+ * Motion: Lenis (smooth scroll) synced to GSAP ScrollTrigger; Framer Motion for tile springs, gestures and dialogs.
+ * 3D: Three.js via React Three Fiber and drei (hero scene, loaded client-only with next/dynamic).
+ * UI primitives: Radix UI (Dialog, ToggleGroup), lucide-react icons.
+ * State Management: Nano Stores (shared game state, read in React via @nanostores/react).
 🚀 Getting Started
 Prerequisites
- * Node.js v18.14.1 or higher.
+ * Node.js v20.9 or higher.
  * npm, pnpm, or yarn.
 Installation
  * Clone the repository
@@ -33,23 +34,21 @@ cd snapslide
  * Start the development server
    npm run dev
 
-   The game will be available at http://localhost:4321.
+   The game will be available at http://localhost:3000.
 📂 Project Structure
 /
-├── public/              # Static assets (favicons, default puzzle images)
+├── public/
+│   └── art/snapslide.svg     # Default puzzle artwork
 ├── src/
+│   ├── app/                  # layout.tsx, page.tsx, globals.css
 │   ├── components/
-│   │   ├── Board.jsx    # The main game logic (React/Preact/Svelte Island)
-│   │   ├── Upload.astro # File input component
-│   │   ├── Timer.jsx    # Timer display (Subscribes to game state)
-│   │   └── UI/          # Buttons, Modals (Tailwind components)
-│   ├── layouts/
-│   │   └── Layout.astro # Main HTML wrapper
-│   ├── pages/
-│   │   └── index.astro  # The Game Entry Point
-│   └── stores/
-│       └── gameStore.js # Nano Store for global state (time, moves, isPlaying)
-└── astro.config.mjs     # Configuration
+│   │   ├── providers/        # SmoothScroll (Lenis <-> GSAP ticker sync)
+│   │   ├── hero/             # Hero + R3F HeroScene (client-only)
+│   │   ├── sections/         # Pinned slice sequence, difficulty cards, footer
+│   │   └── game/             # Game controls, Board, ImageDrop
+│   ├── lib/                  # Scramble algorithm, GSAP registration, scroll helper
+│   └── stores/gameStore.ts   # Nano Store for global state (time, moves, isPlaying)
+└── next.config.ts
 
 🧠 How It Works
 1. The Slicing Mechanic

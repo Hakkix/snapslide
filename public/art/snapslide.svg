@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#667eea"/>
+      <stop offset="0.5" stop-color="#764ba2"/>
+      <stop offset="1" stop-color="#f093fb"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.3" cy="0.25" r="0.6">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <rect width="800" height="800" fill="url(#glow)"/>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.18" stroke-width="2">
+    <circle cx="160" cy="160" r="90"/>
+    <circle cx="160" cy="160" r="130"/>
+    <circle cx="640" cy="640" r="110"/>
+    <circle cx="640" cy="640" r="170"/>
+    <path d="M0 560 C 200 460, 360 700, 800 520"/>
+    <path d="M0 610 C 220 510, 380 750, 800 570"/>
+  </g>
+  <g fill="#ffffff" fill-opacity="0.14">
+    <circle cx="620" cy="150" r="60"/>
+    <circle cx="700" cy="250" r="26"/>
+    <rect x="70" y="600" width="120" height="120" rx="18" transform="rotate(-12 130 660)"/>
+  </g>
+  <g font-family="Arial Black, Helvetica, sans-serif" font-weight="900" text-anchor="middle" fill="#ffffff">
+    <text x="400" y="385" font-size="170" fill-opacity="0.92">SNAP</text>
+    <text x="400" y="540" font-size="170" fill-opacity="0.55">SLIDE</text>
+  </g>
+</svg>
